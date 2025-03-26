@@ -18,8 +18,6 @@ async function connectDB() {
 }
 
 ///////////////  below second method tho connect db
-const uri =
-  "mongodb+srv://yadavnirmal07:Nirmal123@streaming.rfojz.mongodb.net/?appName=streaming";
 
 const client = new MongoClient(process.env.MONGO_URI, {
   serverApi: {
