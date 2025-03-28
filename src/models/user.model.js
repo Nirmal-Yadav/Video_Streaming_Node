@@ -47,7 +47,7 @@ const userSchema = new Schema(
       type: String,
     },
   },
-  { timestamps: "true" } // gives createdAt updatedAt
+  { timestamps: true } // gives createdAt updatedAt
 );
 
 userSchema.pre("save", async function (next) {
