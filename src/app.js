@@ -20,8 +20,14 @@ app.use(
   })
 );
 
-app.use(express.static("public"));
 app.use(cookieParser());
+
+app.get("/test-cookies", (req, res) => {
+  console.log("Cookies:", req.cookies);
+  res.json({ cookies: req.cookies });
+});
+
+app.use(express.static("public"));
 
 // import routes
 import userRouter from "./routes/user.routes.js";
