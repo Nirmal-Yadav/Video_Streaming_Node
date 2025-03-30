@@ -182,14 +182,14 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   const user = await User.findById(decodedToken?._id);
 
   if (!user) {
-    throw new ApiError("invalid refresh token");
+    throw new ApiError(403, "invalid refresh token");
   }
 
   if (incomingRefreshToken !== user?.refreshToken) {
     throw new ApiError(403, "Refresh token is expired or used");
   }
 
-  const { accessToken, newRefreshToken } = await generateAccessAndRefreshTokens(
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id
   );
 
@@ -201,13 +201,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", newRefreshToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(
       new ApiResponse(
         200,
         {
           accessToken,
-          newRefreshToken,
+          refreshToken,
         },
         "token generated"
       )
@@ -224,12 +224,12 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
   if (!isPasswordCorrect) {
-    throw new Error(400, "old invalid password");
+    throw new ApiError(400, "old invalid password");
   }
 
   user.password = newPassword;
 
-  user.save({ validateBeforeSave: false }); // avaoid triggering validation
+  await user.save({ validateBeforeSave: false }); // avaoid triggering validation
 
   return res
     .status(200)
@@ -239,7 +239,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(200, req.user, "current user fetched succesfully");
+    .json(new ApiResponse(200, req.user, "current user fetched succesfully"));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -335,7 +335,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     {
       $lookup: {
         from: "subscriptions",
-        localField: " _id",
+        localField: "_id",
         foreignField: "channel",
         as: "subscribers",
       },
@@ -359,7 +359,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         isSubscribed: {
           $cond: {
             if: {
-              $in: [req.user?._id, "$subscribers.subscriber"],
+              $in: [req.user?._id, "$subscribers.channel"], //              $in: [req.user?._id, "$subscribers.subscriber"],
             },
             then: true,
             else: false,
@@ -405,7 +405,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
         pipeline: [
           {
             $lookup: {
-              form: "users",
+              from: "users",
               localField: "owner", // in video
               foreignField: "_id", // in user
               as: "owner",
@@ -437,7 +437,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        user[0].getWatchHistory,
+        user[0]?.getWatchHistory,
         "Watch history fetched succesfully"
       )
     );
