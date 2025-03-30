@@ -57,6 +57,12 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {
+  console.log(password, "thissss", this.password);
+
+  console.log(await bcrypt.compare(password, this.password), "this.password");
+  if (!this.password) {
+    throw new Error("Password is missing in the database");
+  }
   return await bcrypt.compare(password, this.password);
 };
 

@@ -165,6 +165,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
 
+  // console.log(req.body, "...");
+
   if (!incomingRefreshToken) {
     throw new ApiError(401, "Unauthorized request");
   }
@@ -221,6 +223,13 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 
   const user = await User.findById(_id);
 
+  // console.log(user, "_id");
+
+  if (!user.password) {
+    throw new ApiError(400, "User password is missing in the database");
+  }
+  console.log(oldPassword, "isPasswordCorrect");
+
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
   if (!isPasswordCorrect) {
@@ -260,11 +269,11 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     {
       new: true, // updated info is retured
     }
-  ).select("-password");
+  ).select("-password -refreshToken");
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Account details updated succesfully"));
+    .json(new ApiResponse(200, user, "Account details updated succesfully"));
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
@@ -287,7 +296,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
       },
     },
     { new: true }
-  ).select("-password");
+  ).select("-password -refreshToken");
 
   return res.status(200).json(new ApiResponse(200, user, "avatar updated"));
 });
@@ -312,7 +321,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
       },
     },
     { new: true } // updated info is returned
-  ).select("-password");
+  ).select("-password -refreshToken");
 
   return res
     .status(200)
