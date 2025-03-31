@@ -35,10 +35,12 @@ const userSchema = new Schema(
       type: String,
       required: [true, "avatar is required"],
     },
-    watchHistory: {
-      type: [Schema.Types.ObjectId],
-      ref: "Video",
-    },
+    watchHistory: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Video",
+      },
+    ],
     password: {
       type: String,
       required: [true, "Password is required"],
