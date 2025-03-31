@@ -14,6 +14,10 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
+import {
+  subscribeToChannel,
+  unsubscribeFromChannel,
+} from "../controllers/subscriber.controller.js";
 const router = Router();
 
 router.route("/register").post(
@@ -49,5 +53,12 @@ router
 
 router.route("/c/:username").get(verifyJwt, getUserChannelProfile);
 router.route("/history").get(verifyJwt, getWatchHistory);
+
+// subscriber
+
+router.route("/subscribe/:channelId").post(verifyJwt, subscribeToChannel);
+router
+  .route("/unsubscribe/:channelId")
+  .delete(verifyJwt, unsubscribeFromChannel);
 
 export default router;

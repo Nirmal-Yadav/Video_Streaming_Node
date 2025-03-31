@@ -14,4 +14,4 @@ const subscriptionSchema = new Schema(
   { timestamps: true }
 );
 
-export const Subcription = model("Subscription", subscriptionModel);
+export const Subscriber = model("Subscription", subscriptionSchema);
