@@ -22,7 +22,7 @@ async function connectDB() {
 const client = new MongoClient(process.env.MONGO_URI, {
   serverApi: {
     version: ServerApiVersion.v1,
-    strict: true,
+    // strict: true,
     deprecationErrors: true,
   },
 });

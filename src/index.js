@@ -18,7 +18,7 @@ connectDB()
     });
   })
   .catch(() => {
-    console.log("momgo db connection failed");
+    console.log("mongo db connection failed");
   });
 
 const server = new ApolloServer({

@@ -16,7 +16,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
     user.refreshToken = refreshToken;
 
-    await user.save({ validateBeforeSave: false }); // no need of password after using validate before save
+    await user.save({ validateBeforeSave: false }); // disables Mongoose's automatic validation before saving the document.
 
     return { accessToken, refreshToken };
   } catch (error) {

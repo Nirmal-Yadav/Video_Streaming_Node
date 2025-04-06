@@ -27,7 +27,7 @@ app.get("/test-cookies", (req, res) => {
   res.json({ cookies: req.cookies });
 });
 
-app.use(express.static("public"));
+app.use(express.static("public")); // static files like HTML, CSS, JavaScript, images, videos, fonts, etc.
 
 // import routes
 import userRouter from "./routes/user.routes.js";
